@@ -66,4 +66,35 @@ router.post('/lvr', validateLvrInput, (req, res) => {
   }
 });
 
-module.exports = router; 
+/**
+ * @swagger
+ * /api/example:
+ *   get:
+ *     summary: Get an example loan application
+ *     responses:
+ *       200:
+ *         description: Example loan application
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 loanAmount:
+ *                   type: number
+ *                 cashOutAmount:
+ *                   type: number
+ *                 estimatedPropertyValue:
+ *                   type: number
+ *                 propertyValuationPhysical:
+ *                   type: number
+ */
+router.get('/example', (req, res) => {
+  res.json({
+    loanAmount: 200000,
+    cashOutAmount: 50000,
+    estimatedPropertyValue: 400000,
+    propertyValuationPhysical: 380000
+  });
+});
+
+module.exports = router;
