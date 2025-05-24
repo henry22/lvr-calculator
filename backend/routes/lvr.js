@@ -97,4 +97,49 @@ router.get('/example', (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/validate:
+ *   post:
+ *     summary: Validate a loan application input
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               loanAmount:
+ *                 type: number
+ *               cashOutAmount:
+ *                 type: number
+ *               estimatedPropertyValue:
+ *                 type: number
+ *               propertyValuationPhysical:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Input is valid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 valid:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+router.post('/validate', validateLvrInput, (req, res) => {
+  res.json({ valid: true });
+});
+
 module.exports = router;
