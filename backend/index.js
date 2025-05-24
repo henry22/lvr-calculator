@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 const loggingMiddleware = require('./middleware/logging');
+const cors = require("cors");
 
 app.use(express.json());
 app.use(loggingMiddleware);
+app.use(cors());
 
 // Health check endpoint
 app.get('/health', (req, res) => {

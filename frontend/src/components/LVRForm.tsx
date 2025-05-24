@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const LVRForm = () => {
   const [formData, setFormData] = useState({
@@ -8,20 +8,66 @@ const LVRForm = () => {
     propertyValuationPhysical: "",
     propertyValuationEvidence: "",
   });
-  const [lvr, setLvr] = useState(null);
-  const [error, setError] = useState(null);
+  const [lvr, setLvr] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // (Later, we'll call our backend endpoint here.)
-    // (For now, you can log the form data.)
+    // (Later, you can (for example) POST the form data (or "lvr") to a configurable endpoint.)
     console.log(formData);
   };
+
+  // (Optional) (For example, "onBlur" (or "useEffect") on "loan amount" or "estimated property value" (or "cash out" or "physical valuation") to trigger a "fetch" (or "axios") call.)
+  useEffect(() => {
+    const {
+      loanAmount,
+      cashOutAmount,
+      estimatedPropertyValue,
+      propertyValuationPhysical,
+    } = formData;
+    if (loanAmount && estimatedPropertyValue) {
+      fetch("http://localhost:3001/api/lvr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          loanAmount: Number(loanAmount),
+          cashOutAmount: cashOutAmount ? Number(cashOutAmount) : 0,
+          estimatedPropertyValue: Number(estimatedPropertyValue),
+          propertyValuationPhysical: propertyValuationPhysical
+            ? Number(propertyValuationPhysical)
+            : undefined,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            setError(data.error);
+            setLvr(null);
+          } else {
+            setLvr(data.lvr);
+            setError(null);
+          }
+        })
+        .catch((err) => {
+          setError("Error calling backend: " + err.message);
+          setLvr(null);
+        });
+    } else {
+      // (If (for example) "loan amount" or "estimated property value" is empty, (for example) reset "lvr" (and "error").)
+      setLvr(null);
+      setError(null);
+    }
+  }, [
+    formData.loanAmount,
+    formData.cashOutAmount,
+    formData.estimatedPropertyValue,
+    formData.propertyValuationPhysical,
+  ]);
 
   return (
     <form
