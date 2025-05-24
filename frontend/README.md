@@ -1,54 +1,113 @@
-# React + TypeScript + Vite
+# LVR Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack application to calculate the Loan-to-Value Ratio (LVR) for loan applications.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **backend/**: Node.js Express REST API for LVR calculation
+- **frontend/**: React + Vite + Tailwind CSS UI for user interaction
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Backend: RESTful LVR Service
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Run the Backend
+
+```sh
+cd backend
+npm install
+npm start
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The server will run on `http://localhost:3001` by default.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Example API Request
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+Calculate LVR with curl:
+
+```sh
+curl -X POST http://localhost:3001/api/lvr \
+  -H "Content-Type: application/json" \
+  -d '{
+    "loanAmount": 200000,
+    "cashOutAmount": 50000,
+    "estimatedPropertyValue": 400000,
+    "propertyValuationPhysical": 380000
+  }'
 ```
+
+**Response:**
+
+```json
+{ "lvr": 0.6578947368421053 }
+```
+
+---
+
+## Frontend: React Application
+
+### Run the Frontend
+
+```sh
+cd frontend
+npm install
+npm run dev
+```
+
+The app will run on `http://localhost:5173` (or as shown in your terminal).
+
+### Usage
+
+- Fill in the form fields:
+  - Estimated property value (required)
+  - Loan amount (required)
+  - Cash out amount (optional)
+  - Physical property valuation (optional)
+  - Property valuation evidence (required if physical valuation is provided)
+- The LVR will be calculated and displayed.
+- If LVR < 90%, the submit button is enabled.
+- On submit, the data is POSTed to the backend.
+
+---
+
+## Testing the Backend
+
+You can use [Jest](https://jestjs.io/) or [Mocha](https://mochajs.org/) for backend tests. Example test cases:
+
+- Valid LVR calculation
+- Validation errors for out-of-range values
+- Edge cases (e.g., missing required fields)
+
+---
+
+## Build & Deploy (Stretch)
+
+- **Frontend:** Build with `npm run build` and deploy the `dist/` folder to Vercel, Netlify, or any static host.
+- **Backend:** Deploy to any Node.js host (Heroku, Render, AWS, etc.).
+- **Docker:** You can containerize both parts for easy deployment.
+
+---
+
+## Authorization (Stretch)
+
+To restrict access to the backend API, consider:
+
+- **API Keys:** Require a key in the request header.
+- **JWT Auth:** Use JSON Web Tokens for user authentication.
+- **OAuth:** For more advanced scenarios.
+
+---
+
+## Example Interaction
+
+1. Start both backend and frontend.
+2. Open the frontend in your browser, fill out the form, and see the LVR calculated live.
+3. Try submitting with different values to see validation and error handling in action.
+
+---
+
+## Notes
+
+- All business logic and validation are handled in the backend for security.
+- The frontend is fully responsive and works down to 320px width.
+- For further improvements, see the stretch goals above.
