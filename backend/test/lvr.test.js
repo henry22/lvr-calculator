@@ -253,3 +253,87 @@ describe('Validate Endpoint - Additional Cases', () => {
       });
   });
 });
+
+describe('LVR Endpoint - Error Branches', () => {
+  it('should return 400 if property value is zero (estimatedPropertyValue)', (done) => {
+    request(app)
+      .post('/api/lvr')
+      .send({
+        loanAmount: 100000,
+        cashOutAmount: 0,
+        estimatedPropertyValue: 0
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.status).to.equal(400);
+        expect(res.body).to.have.property('error');
+        done();
+      });
+  });
+
+  it('should return 400 if property value is zero (propertyValuationPhysical)', (done) => {
+    request(app)
+      .post('/api/lvr')
+      .send({
+        loanAmount: 100000,
+        cashOutAmount: 0,
+        estimatedPropertyValue: 200000,
+        propertyValuationPhysical: 0
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.status).to.equal(400);
+        expect(res.body).to.have.property('error');
+        done();
+      });
+  });
+});
+
+describe('LVR Endpoint - Full Branch Coverage', () => {
+  it('should use estimatedPropertyValue if propertyValuationPhysical is undefined', (done) => {
+    request(app)
+      .post('/api/lvr')
+      .send({
+        loanAmount: 100000,
+        cashOutAmount: 0,
+        estimatedPropertyValue: 200000
+        // propertyValuationPhysical is undefined
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.status).to.equal(200);
+        expect(res.body.lvr).to.be.closeTo(0.5, 0.0001);
+        done();
+      });
+  });
+
+  it('should return 400 if both property values are missing', (done) => {
+    request(app)
+      .post('/api/lvr')
+      .send({
+        loanAmount: 100000,
+        cashOutAmount: 0
+        // missing estimatedPropertyValue and propertyValuationPhysical
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.status).to.equal(400);
+        expect(res.body).to.have.property('error');
+        done();
+      });
+  });
+});
+
+describe('LVR Endpoint - Error Handler Coverage', () => {
+  it('should return 400 and error if calculateLvr throws (malformed input)', (done) => {
+    request(app)
+      .post('/api/lvr')
+      .send({}) // missing all required fields
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.status).to.equal(400);
+        expect(res.body).to.have.property('error');
+        done();
+      });
+  });
+});
