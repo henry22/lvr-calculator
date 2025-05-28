@@ -106,9 +106,80 @@ The app will run on `http://localhost:5173` (or as shown in your terminal).
 
 ## Build & Deploy
 
-- **Frontend:** Build with `npm run build` and deploy the `dist/` folder to Vercel, Netlify, or any static host.
-- **Backend:** Deploy to any Node.js host (Heroku, Render, AWS, etc.).
-- **Docker:** You can containerize both parts for easy deployment.
+### Backend Deployment
+
+#### Using Docker
+
+The backend service is containerized using Docker. To build and run locally:
+
+```sh
+# Build the Docker image
+docker build -t lvr-calculator-backend ./backend
+
+# Run the container
+docker run -p 3001:3001 lvr-calculator-backend
+```
+
+The container includes:
+
+- Node.js 20 LTS runtime
+- Production-optimized build
+- Health check endpoint at `/health`
+- Environment variable configuration
+- Proper security practices (non-root user, minimal dependencies)
+
+#### Deployment Options
+
+1. **AWS Elastic Container Service (ECS)**
+
+   - Push to Amazon ECR
+   - Deploy as a service with Fargate
+   - Auto-scaling and load balancing
+
+2. **Google Cloud Run**
+
+   - Serverless container deployment
+   - Automatic scaling
+   - Pay-per-use pricing
+
+3. **Heroku with Container Support**
+   - Simple deployment process
+   - Built-in monitoring
+   - Easy scaling
+
+### Frontend Deployment
+
+- Build with `npm run build` in the frontend directory
+- Deploy the `dist/` folder to:
+  - Vercel (recommended for React apps)
+  - Netlify
+  - AWS S3 + CloudFront
+  - Any static hosting service
+
+### Environment Configuration
+
+For production deployment, set these environment variables:
+
+```sh
+# Backend
+NODE_ENV=production
+PORT=3001
+# Add any API keys or secrets here
+
+# Frontend
+VITE_API_URL=https://your-backend-url.com
+```
+
+### CI/CD Setup (Recommended)
+
+Set up a CI/CD pipeline to:
+
+1. Run tests
+2. Build Docker images
+3. Push to container registry
+4. Deploy to production
+
+Example GitHub Actions workflow available in `.github/workflows/`
 
 ---
 
