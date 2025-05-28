@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Testing
+test
+.nyc_output
+coverage
+
+# Version control
+.git
+.gitignore
+
+# Environment variables
+.env
+.env.*
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db 
